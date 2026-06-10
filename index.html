@@ -69,6 +69,46 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ── Splash Screen ── */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #splash-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .splash-logo {
+      width: 200px;
+      height: auto;
+      animation: splashPulse 2s ease-in-out infinite;
+    }
+    .splash-footer-logo {
+      position: absolute;
+      bottom: 60px;
+      width: 160px;
+      height: auto;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .splash-footer-logo.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @keyframes splashPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
     /* ── Install Banner ── */
     #install-bar {
       position: fixed;
@@ -176,6 +216,11 @@
       animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       position: relative;
       overflow: hidden;
+      /* Background herobg.png */
+      background-image: url('assets/herobg.png');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
     }
 
     .hero::before {
@@ -613,14 +658,12 @@
       color: var(--green);
     }
     .fab:active { transform: scale(0.97); }
-    .fab svg {
+    .fab img.fab-icon {
       width: 22px;
       height: 22px;
+      object-fit: contain;
       flex-shrink: 0;
       transition: var(--transition-fast);
-    }
-    .fab:hover svg {
-      stroke: var(--green);
     }
     .fab:nth-child(2) { animation-delay: 0.5s; }
 
@@ -640,20 +683,30 @@
       .stat-card .stat-value { font-size: 1.1rem; }
       .features-grid { gap: 10px; }
       .feature-card { padding: 20px 14px; }
+      .splash-logo { width: 160px; }
+      .splash-footer-logo { width: 140px; }
     }
     @media (max-width: 360px) {
       .hero { padding-top: 90px; }
       .mascot-wrap { width: 150px; height: 150px; }
       .value-chip { padding: 14px 20px; font-size: 0.85rem; }
       .fab { padding: 12px 16px; font-size: 0.82rem; }
-      .fab svg { width: 18px; height: 18px; }
+      .fab img.fab-icon { width: 18px; height: 18px; }
       .stats-grid { gap: 8px; }
       .features-grid { gap: 8px; }
       .feature-card { padding: 18px 12px; }
+      .splash-logo { width: 140px; }
+      .splash-footer-logo { width: 120px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <img src="assets/logosplash.png" alt="GEMPAR Splash" class="splash-logo" loading="eager">
+    <img src="assets/logosplash2.png" alt="GEMPAR Footer Logo" class="splash-footer-logo" id="splash-footer-logo" loading="eager">
+  </div>
 
   <!-- Update Available Banner -->
   <div id="update-bar">
@@ -670,7 +723,7 @@
     </div>
   </div>
 
-  <!-- Hero -->
+  <!-- Hero dengan herobg.png sebagai background -->
   <section class="hero">
     <div class="mascot-wrap">
       <img src="assets/mascot.png" alt="GEMPAR Mascot" loading="eager">
@@ -769,24 +822,35 @@
     </div>
   </footer>
 
-  <!-- FABs with SVG inline icons -->
+  <!-- FABs dengan icon PNG inline -->
   <div class="fab-container">
     <a href="https://gempar212.base44.app" class="fab">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
+      <img src="assets/fab1.png" alt="Chat" class="fab-icon" loading="lazy">
       Chat Si Gempar
     </a>
     <a href="https://gemparwarakas-v2.base44.app" class="fab">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
+      <img src="assets/FAB2.png" alt="App" class="fab-icon" loading="lazy">
       Ke Aplikasi Gempar
     </a>
   </div>
 
   <script>
+    // ── Splash Screen ──
+    (function() {
+      const splash = document.getElementById('splash-screen');
+      const footerLogo = document.getElementById('splash-footer-logo');
+      
+      // Tampilkan logosplash2.png di footer setelah 1 detik
+      setTimeout(() => {
+        footerLogo.classList.add('show');
+      }, 1000);
+      
+      // Sembunyikan splash screen setelah 3 detik
+      setTimeout(() => {
+        splash.classList.add('hide');
+      }, 3000);
+    })();
+
     // ── Carousel ──
     (function() {
       const slides = document.querySelectorAll('#carousel img');
