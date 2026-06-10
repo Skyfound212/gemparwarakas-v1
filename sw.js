@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'gempar-v5';
+const CACHE_VERSION = 'gempar-v1';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
