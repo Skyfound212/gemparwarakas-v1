@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>GEMPAR — Gerakan Memilah Sampah Dari Rumah</title>
+  <meta name="description" content="Pilah sampah dari rumah, dapatkan GEM, dan tukarkan banyak reward. Gerakan memilah sampah dari rumah untuk lingkungan lebih bersih.">
+
+  <!-- Android Chrome -->
+  <meta name="theme-color" content="#22c55e">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GEMPAR">
+
+  <!-- Windows -->
+  <meta name="msapplication-TileColor" content="#22c55e">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-elevated: #f8fafc;
+      --bg-card: #ffffff;
+      --green: #22c55e;
+      --green-light: #dcfce7;
+      --green-hover: #16a34a;
+      --green-dark: #15803d;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --border: #e2e8f0;
+      --border-light: #f1f5f9;
+      --radius-sm: 12px;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+      --shadow-green: 0 8px 32px rgba(34,197,94,0.18);
+      --shadow-green-lg: 0 12px 48px rgba(34,197,94,0.22);
+      --transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      --transition-fast: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Install Banner ── */
+    #install-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      transform: translateY(-100%);
+      transition: var(--transition);
+    }
+    #install-bar.show { transform: translateY(0); }
+    #install-bar .install-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    #install-bar .install-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-green);
+    }
+    #install-bar .install-btn:hover { 
+      background: var(--green-hover); 
+      transform: scale(1.04);
+      box-shadow: var(--shadow-green-lg);
+    }
+    #install-bar .install-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-left: 12px;
+      padding: 4px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+    }
+    #install-bar .install-close:hover { 
+      background: var(--border-light); 
+      color: var(--text);
+    }
+
+    /* ── Update Banner ── */
+    #update-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1001;
+      transform: translateY(-100%);
+      transition: var(--transition);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-green);
+    }
+    #update-bar.show { transform: translateY(0); }
+    #update-bar .update-btn {
+      background: #fff;
+      color: var(--green);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+    }
+    #update-bar .update-btn:hover { 
+      transform: scale(1.05);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 100px 24px 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .mascot-wrap {
+      width: 180px;
+      height: 180px;
+      margin-bottom: 28px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md), 0 0 0 8px rgba(34,197,94,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      transition: var(--transition);
+    }
+    .mascot-wrap:hover {
+      transform: scale(1.04);
+      box-shadow: var(--shadow-lg), 0 0 0 12px rgba(34,197,94,0.1);
+    }
+    .mascot-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.2;
+      max-width: 460px;
+      margin-bottom: 16px;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 1;
+      color: var(--text);
+    }
+    .hero h1 .accent { 
+      color: var(--green);
+      position: relative;
+    }
+    .hero h1 .accent::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: var(--green-light);
+      border-radius: 4px;
+      z-index: -1;
+      opacity: 0.7;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 400px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--green);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 100px;
+      box-shadow: var(--shadow-green);
+      transition: var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent, rgba(255,255,255,0.15));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      background: var(--green-hover);
+      box-shadow: var(--shadow-green-lg);
+    }
+    .cta-btn:hover::before { opacity: 1; }
+    .cta-btn:active { transform: translateY(0) scale(0.98); }
+    .cta-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    /* ── Carousel ── */
+    .carousel-section {
+      padding: 20px 24px 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 10;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+
+    .carousel img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+      border-radius: var(--radius-lg);
+    }
+    .carousel img.active { opacity: 1; }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .carousel-dots button {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .carousel-dots button.active {
+      background: var(--green);
+      transform: scale(1.3);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
+    }
+
+    /* ── Value Info ── */
+    .value-section {
+      padding: 20px 24px 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .value-grid {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .value-chip {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      padding: 16px 28px;
+      border-radius: 100px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-fast);
+      cursor: default;
+      box-shadow: var(--shadow-sm);
+    }
+    .value-chip:hover { 
+      transform: translateY(-3px); 
+      border-color: rgba(34,197,94,0.3);
+      box-shadow: var(--shadow-md);
+      color: var(--text);
+    }
+    .value-chip .dot { 
+      width: 10px; 
+      height: 10px; 
+      border-radius: 50%; 
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
+      flex-shrink: 0;
+    }
+
+    /* ── Stats Section ── */
+    .stats-section {
+      padding: 20px 24px 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 12px;
+      text-align: center;
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(34,197,94,0.2);
+      box-shadow: var(--shadow-md);
+    }
+    .stat-card .stat-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--green-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      color: var(--green);
+      font-size: 1.2rem;
+    }
+    .stat-card .stat-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .stat-card .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Features Section ── */
+    .features-section {
+      padding: 20px 24px 40px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .features-title {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      text-align: center;
+      transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green), var(--green-hover));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(34,197,94,0.2);
+      box-shadow: var(--shadow-md);
+    }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card .feature-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--green-light);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      color: var(--green);
+      font-size: 1.5rem;
+      transition: var(--transition-fast);
+    }
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+      background: var(--green);
+      color: #fff;
+    }
+    .feature-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 40px 24px 140px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .footer-brand .dot-brand {
+      width: 10px;
+      height: 10px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
+    }
+    .footer-brand span {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .footer p {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.8;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--green); }
+
+    /* ── FABs ── */
+    .fab-container {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 900;
+    }
+
+    .fab {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 100px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: var(--transition-fast);
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
+    .fab:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(34,197,94,0.3);
+      color: var(--green);
+    }
+    .fab:active { transform: scale(0.97); }
+    .fab svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      transition: var(--transition-fast);
+    }
+    .fab:hover svg {
+      stroke: var(--green);
+    }
+    .fab:nth-child(2) { animation-delay: 0.5s; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .stat-card { padding: 16px 8px; }
+      .stat-card .stat-value { font-size: 1.1rem; }
+      .features-grid { gap: 10px; }
+      .feature-card { padding: 20px 14px; }
+    }
+    @media (max-width: 360px) {
+      .hero { padding-top: 90px; }
+      .mascot-wrap { width: 150px; height: 150px; }
+      .value-chip { padding: 14px 20px; font-size: 0.85rem; }
+      .fab { padding: 12px 16px; font-size: 0.82rem; }
+      .fab svg { width: 18px; height: 18px; }
+      .stats-grid { gap: 8px; }
+      .features-grid { gap: 8px; }
+      .feature-card { padding: 18px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Update Available Banner -->
+  <div id="update-bar">
+    <span>Update tersedia! Muat ulang untuk versi terbaru.</span>
+    <button class="update-btn" id="update-reload-btn">Muat Ulang</button>
+  </div>
+
+  <!-- Install Banner -->
+  <div id="install-bar">
+    <span class="install-text">Install GEMPAR App</span>
+    <div style="display:flex;align-items:center;">
+      <button class="install-btn" id="install-btn">Install</button>
+      <button class="install-close" id="install-close">&times;</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="mascot-wrap">
+      <img src="assets/mascot.png" alt="GEMPAR Mascot" loading="eager">
+    </div>
+    <h1>
+      Pilah Sampah dari Rumah, Dapat <span class="accent">GEM</span>, Banyak Manfaat
+    </h1>
+    <p>
+      Mulai dari rumah untuk lingkungan lebih bersih dan masa depan lebih baik
+    </p>
+    <a href="https://gempar212.base44.app" class="cta-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"/></svg>
+      Masuk ke Aplikasi
+    </a>
+  </section>
+
+  <!-- Carousel -->
+  <section class="carousel-section">
+    <div class="carousel" id="carousel">
+      <img src="assets/slide1.jpg" alt="Slide 1" class="active" loading="lazy">
+      <img src="assets/slide2.jpg" alt="Slide 2" loading="lazy">
+      <img src="assets/slide3.jpg" alt="Slide 3" loading="lazy">
+    </div>
+    <div class="carousel-dots" id="dots"></div>
+  </section>
+
+  <!-- Value Info -->
+  <section class="value-section">
+    <div class="value-grid">
+      <div class="value-chip"><span class="dot"></span>Pilah Sampah</div>
+      <div class="value-chip"><span class="dot"></span>Dapat GEM</div>
+      <div class="value-chip"><span class="dot"></span>Tukar Reward</div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">&#9851;</div>
+        <div class="stat-value">50K+</div>
+        <div class="stat-label">Sampah Terpilah</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">&#127941;</div>
+        <div class="stat-value">12K+</div>
+        <div class="stat-label">Pengguna Aktif</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">&#127807;</div>
+        <div class="stat-value">5K+</div>
+        <div class="stat-label">Reward Diberikan</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="features-title">Fitur Unggulan</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">&#128247;</div>
+        <h3>Scan Sampah</h3>
+        <p>Identifikasi jenis sampah dengan kamera</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128176;</div>
+        <h3>Kumpulkan GEM</h3>
+        <p>Dapatkan poin dari setiap pemilahan</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#127873;</div>
+        <h3>Tukar Reward</h3>
+        <p>Pilih reward menarik dari katalog</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">&#128200;</div>
+        <h3>Dashboard</h3>
+        <p>Pantau kontribusi lingkunganmu</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <div class="dot-brand"></div>
+      <span>GEMPAR</span>
+    </div>
+    <p>Gerakan Memilah Sampah Dari Rumah</p>
+    <p>&copy; 2026 GEMPAR. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Tentang</a>
+      <a href="#">Kebijakan</a>
+      <a href="#">Bantuan</a>
+    </div>
+  </footer>
+
+  <!-- FABs with SVG inline icons -->
+  <div class="fab-container">
+    <a href="https://gempar212.base44.app" class="fab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      Chat Si Gempar
+    </a>
+    <a href="https://gemparwarakas-v2.base44.app" class="fab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Ke Aplikasi Gempar
+    </a>
+  </div>
+
+  <script>
+    // ── Carousel ──
+    (function() {
+      const slides = document.querySelectorAll('#carousel img');
+      const dotsContainer = document.getElementById('dots');
+      let current = 0;
+      const total = slides.length;
+
+      slides.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.setAttribute('aria-label', 'Slide ' + (i + 1));
+        if (i === 0) btn.classList.add('active');
+        btn.addEventListener('click', () => goTo(i));
+        dotsContainer.appendChild(btn);
+      });
+      const dots = dotsContainer.querySelectorAll('button');
+
+      function goTo(index) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+
+      function next() {
+        goTo((current + 1) % total);
+      }
+
+      setInterval(next, 3500);
+    })();
+
+    // ── PWA Install Banner ──
+    (function() {
+      let deferredPrompt = null;
+      const bar = document.getElementById('install-bar');
+      const installBtn = document.getElementById('install-btn');
+      const closeBtn = document.getElementById('install-close');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        bar.classList.add('show');
+        setTimeout(() => bar.classList.remove('show'), 5000);
+      });
+
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          bar.classList.remove('show');
+        }
+        deferredPrompt = null;
+      });
+
+      closeBtn.addEventListener('click', () => {
+        bar.classList.remove('show');
+      });
+
+      window.addEventListener('load', () => {
+        if (!deferredPrompt) {
+          setTimeout(() => bar.classList.remove('show'), 6000);
+        }
+      });
+    })();
+
+    // ── Service Worker with Auto-Update ──
+    (function() {
+      if (!('serviceWorker' in navigator)) return;
+
+      const updateBar = document.getElementById('update-bar');
+      const updateReloadBtn = document.getElementById('update-reload-btn');
+      let newWorker = null;
+
+      updateReloadBtn.addEventListener('click', () => {
+        if (newWorker) {
+          newWorker.postMessage({ action: 'skipWaiting' });
+        }
+        window.location.reload();
+      });
+
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => {
+            console.log('SW registered:', reg.scope);
+
+            setInterval(() => {
+              reg.update();
+            }, 60000);
+
+            reg.update();
+
+            reg.addEventListener('updatefound', () => {
+              newWorker = reg.installing;
+              console.log('New SW installing...');
+
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('New SW waiting - update available');
+                  updateBar.classList.add('show');
+                }
+                if (newWorker.state === 'activated') {
+                  console.log('New SW activated');
+                  updateBar.classList.remove('show');
+                  newWorker = null;
+                }
+              });
+            });
+
+            navigator.serviceWorker.addEventListener('message', (event) => {
+              if (event.data && event.data.type === 'SW_UPDATED') {
+                console.log('SW says updated, reloading...');
+                window.location.reload();
+              }
+            });
+          })
+          .catch(err => console.log('SW failed:', err));
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        refreshing = true;
+        console.log('Controller changed, reloading page');
+        window.location.reload();
+      });
+    })();
+  </script>
+</body>
+</html>
